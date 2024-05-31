@@ -117,11 +117,26 @@ int main(){
     cout << hex;
     int256 key(0xffeeddccbbaa9988, 0x7766554433221100, 0xf0f1f2f3f4f5f6f7, 0xf8f9fafbfcfdfeff);
     Magma a(key);
-    ullong text = 0xfedcba9876543210;
+    /*ullong text = 0xfedcba9876543210;
     ullong message = a.encrypt(text);
     cout << "\nciphertext = " << message << endl;
     message = a.decrypt(message);
     cout << "\nmessage = " << message;
-    cout << "\noriginal = " << text;
+    cout << "\noriginal = " << text;*/
+    ifstream inputFile("text.txt", ios::binary);  
+    ofstream outputFile("magma_text.txt", ios::binary); 
+    char c;
+    while (inputFile.get(c)) {
+        bitset<8> byte(c); // конвертация в биты
+        for (int i = 0; i < 8; i++) {
+            ullong text = byte[i];
+            ullong message = a.encrypt(text);
+            byte[i] = message;
+        }
+        c = static_cast<char>(byte.to_ulong()); // конвертация в символ
+        outputFile.put(c);
+    }         
+    inputFile.close();
+    outputFile.close();
     return 0;
 }
